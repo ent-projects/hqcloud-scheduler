@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hqcloud-trigger
+  namespace: default
+data:
+  file: file
+  message: message
+
