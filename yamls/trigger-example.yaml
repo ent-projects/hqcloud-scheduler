@@ -4,9 +4,20 @@ kind: Trigger
 metadata:
   name: henry-postgres-trigger
   namespace: default
-type: database
+source: database
+sink: algorithm1 
 info:
-  url: jdbc:postgresql://ip:30306/postgres
-  user: postgres
-  pwd: postgres
+  env:
+    url: jdbc:postgresql://ip:30306/postgres
+    user: postgres
+    pwd: postgres
+  command:
+  - sleep
+  - 2
+result:
+  jobs:
+  - j1
+  - j2
+  value: 21
+  
 

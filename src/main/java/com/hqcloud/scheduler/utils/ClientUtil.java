@@ -1,7 +1,7 @@
 /**
  * Copyrigt (2021, ) Institute of Software, Chinese Academy of Sciences
  */
-package com.github.utils;
+package com.hqcloud.scheduler.utils;
 
 import com.github.kubesys.KubernetesClient;
 import com.github.kubesys.watchers.AutoDiscoverCustomizedResourcesWacther;
