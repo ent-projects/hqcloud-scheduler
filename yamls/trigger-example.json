@@ -1,27 +1,36 @@
 {
-    "apiVersion":"hqcloud.com\/v1",
-    "kind":"Trigger",
-    "metadata":{
-        "name":"henry-postgres-trigger",
-        "namespace":"default"
-    },
-    "source":"database",
-    "sink":"alg1",
-    "info":{
-        "env":{
-            "url":"jdbc:postgresql:\/\/ip:30306\/postgres",
-            "user":"postgres",
-            "pwd":"postgres"
-        },
-        "command":[
-            "sleep",
-            2
-        ]
-    },
-    "result":{
-        "jobs":"",
-        "0":"j1",
-        "1":"j2",
-        "value":21
-    }
+  "apiVersion": "hqcloud.com/v1",
+  "kind": "Trigger",
+  "metadata": {
+    "name": "henry-postgres-trigger",
+    "namespace": "default"
+  },
+  "source": "database",
+  "sink": "alg1",
+  "info": {
+    "env": [
+      {
+        "name": "url",
+        "value": "jdbc:postgresql://ip:30306/postgres"
+      },
+      {
+        "name": "user",
+        "value": "postgres"
+      },
+      {
+        "name": "pwd",
+        "value": "postgres"
+      }
+    ],
+    "command": [
+      "sleep",
+      2
+    ]
+  },
+  "result": {
+    "0": "j1",
+    "1": "j2",
+    "jobs": "",
+    "value": 21
+  }
 }
