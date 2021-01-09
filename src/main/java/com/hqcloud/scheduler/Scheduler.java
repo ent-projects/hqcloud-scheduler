@@ -107,7 +107,11 @@ public class Scheduler {
 			});
 			JsonNode job = toJob(trigger, nodes[0].get("metadata").get("name").asText());
 			try {
-				client.createResource(job);
+				JsonNode createResource = client.createResource(job);
+				if (createResource.has("status") && createResource.get("status")
+						.asText().equals("Failure")) {
+					throw new Exception(createResource.toPrettyString());
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -236,6 +240,7 @@ public class Scheduler {
 							containers.add(container);
 						}
 						spec2.set("containers", containers);
+						spec2.put("restartPolicy", "Never");
 					}
 					
 					temp.set("spec", spec2);
@@ -256,7 +261,7 @@ public class Scheduler {
 	       int number=random.nextInt(62);
 	       sb.append(str.charAt(number));
 	     }
-	     return sb.toString();
+	     return sb.toString().toLowerCase();
 	 }
 	 
 	 protected static String getImage(String key) {
