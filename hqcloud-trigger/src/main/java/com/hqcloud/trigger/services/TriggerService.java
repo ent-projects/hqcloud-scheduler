@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.github.kubesys.KubernetesClient;
 import com.github.kubesys.httpfrk.core.HttpBodyHandler;
@@ -38,6 +39,20 @@ public class TriggerService extends HttpBodyHandler {
 	
 	public JsonNode removeTrigger(String name) throws Exception {
 		return client.deleteResource(KIND, "default", name);
+	}
+	
+	public JsonNode newExecTrigger(String name) throws Exception {
+		JsonNode json = client.getResource("Trigger", "default", name);
+		JsonNode meta = json.get("metadata");
+		ObjectNode labels = meta.has("labels") ? 
+					(ObjectNode) meta.get("labels")
+					: new ObjectMapper().createObjectNode();
+		if (labels.has("execute")) {
+			labels.remove("execute");
+		}
+		labels.put("execute", "true");
+		((ObjectNode) meta).set("labels", labels);
+		return client.updateResource(json);
 	}
 	
 	public Set<String> getTriggers() throws Exception {

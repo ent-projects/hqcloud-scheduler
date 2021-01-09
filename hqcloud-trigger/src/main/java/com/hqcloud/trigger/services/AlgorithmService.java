@@ -89,12 +89,11 @@ public class AlgorithmService extends HttpBodyHandler {
 	}
 	
 	public Set<String> getAlgorithms() throws Exception {
-		Set<String> nodes = new HashSet<>();
-		JsonNode json = client.listResources("Algorithm");
-		for (Iterator<JsonNode> iter = json.get("items").iterator();iter.hasNext();) {
-			JsonNode item = iter.next();
-			nodes.add(item.get("metadata").get("name").asText());
+		Set<String> algs = new HashSet<>();
+		JsonNode json = client.getResource("ConfigMap", "default", "hqcloud-algorithm");
+		for (Iterator<String> iter = json.get("data").fieldNames();iter.hasNext();) {
+			algs.add(iter.next());
 		}
-		return nodes;
+		return algs;
 	}
 }
