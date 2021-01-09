@@ -25,7 +25,7 @@ import com.github.kubesys.httpfrk.HttpServer;
  */
 
 @SpringBootApplication
-@ComponentScan(basePackages = { "com.github.kubesys.httpfrk", "com.hqcloud.scheduler.services" })
+@ComponentScan(basePackages = { "com.github.kubesys.httpfrk", "com.hqcloud.trigger.services" })
 public class ApplicationServer extends HttpServer  {
 
 	/**

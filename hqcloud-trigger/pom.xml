@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.github.kubesys</groupId>
-	<artifactId>hqcloud-scheduler</artifactId>
+	<artifactId>hqcloud-trigger</artifactId>
 	<version>1.4.0</version>
 	<packaging>jar</packaging>
 
@@ -94,7 +94,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.github.webfrk.ApplicationServer</mainClass>
+							<mainClass>com.github.kubesys.ApplicationServer</mainClass>
 						</manifest>
 						<manifestEntries>
 							<Class-Path>.</Class-Path>

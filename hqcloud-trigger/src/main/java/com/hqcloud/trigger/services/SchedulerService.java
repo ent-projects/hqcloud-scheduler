@@ -1,13 +1,13 @@
 /**
  * Copyrigt (2019, ) Institute of Software, Chinese Academy of Sciences
  */
-package com.hqcloud.scheduler.services;
+package com.hqcloud.trigger.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.kubesys.KubernetesClient;
 import com.github.kubesys.httpfrk.core.HttpBodyHandler;
 import com.github.kubesys.tools.annotations.ServiceDefinition;
-import com.hqcloud.scheduler.utils.ClientUtil;
+import com.hqcloud.trigger.utils.ClientUtil;
 
 /**
  * @author wuheng@otcaix.iscas.ac.cn
