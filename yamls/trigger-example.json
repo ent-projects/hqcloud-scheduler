@@ -24,7 +24,7 @@
     ],
     "command": [
       "sleep",
-      2
+      "2"
     ]
   },
   "result": {
