@@ -5,6 +5,9 @@ metadata:
   name: tasks.hqcloud.com
 spec:
   additionalPrinterColumns:
+  - JSONPath: .type
+    name: type
+    type: string
   - JSONPath: .metadata.creationTimestamp
     name: created
     type: string

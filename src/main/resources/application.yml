@@ -1,6 +1,6 @@
 # General configuration
 server:
-  port: 30308
+  port: 8080
   servlet:
-    context-path: /kubesys
+    context-path: /hqcloud
     

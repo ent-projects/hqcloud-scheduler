@@ -3,10 +3,16 @@
  */
 package com.hqcloud.scheduler.services;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.kubesys.KubernetesClient;
 import com.github.kubesys.httpfrk.core.HttpBodyHandler;
 import com.github.kubesys.tools.annotations.ServiceDefinition;
+import com.github.utils.ClientUtil;
 
 /**
  * @author wuheng@otcaix.iscas.ac.cn
@@ -18,15 +24,44 @@ import com.github.kubesys.tools.annotations.ServiceDefinition;
 @ServiceDefinition
 public class TriggerService extends HttpBodyHandler {
 	
-	public void createTrigger(String name, String executor) {
-		
+	public final static String KIND = "Trigger";
+	
+	protected KubernetesClient client = ClientUtil.createDefaultKubernetesClient();
+	
+	public JsonNode createTrigger(JsonNode json) throws Exception {
+		String type = json.has("type") ? json.get("type").asText() : "";
+		if (!getTriggers().contains(type)) {
+			throw new Exception("missing valid type, please see getTriggers.");
+		}
+		return client.createResource(json);
 	}
 	
-	public void removeTrigger(String name, String executor) {
-		
+	public JsonNode removeTrigger(String name) throws Exception {
+		return client.deleteResource(KIND, "default", name);
 	}
 	
-	public List<String> getTriggers() {
-		return null;
+	public Set<String> getTriggers() throws Exception {
+		Set<String> triggers = new HashSet<>();
+		JsonNode json = client.getResource("ConfigMap", "default", "hqcloud-trigger");
+		for (Iterator<String> iter = json.get("data").fieldNames();iter.hasNext();) {
+			triggers.add(iter.next());
+		}
+		return triggers;
+	}
+	
+	public JsonNode addTriggerType(String type, String desc) throws Exception {
+		JsonNode json = client.getResource("ConfigMap", "default", "hqcloud-trigger");
+		ObjectNode data = (ObjectNode) json.get("data");
+		data.put(type, desc);
+		return client.updateResource(json);
+	}
+	
+	public JsonNode removeTriggerType(String type) throws Exception {
+		JsonNode json = client.getResource("ConfigMap", "default", "hqcloud-trigger");
+		ObjectNode data = (ObjectNode) json.get("data");
+		if (data.has(type)) {
+			data.remove(type);
+		}
+		return client.updateResource(json);
 	}
 }

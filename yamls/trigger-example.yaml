@@ -1,0 +1,12 @@
+---
+apiVersion: hqcloud.com/v1
+kind: Trigger
+metadata:
+  name: henry-postgres-trigger
+  namespace: default
+type: database
+info:
+  url: jdbc:postgresql://ip:30306/postgres
+  user: postgres
+  pwd: postgres
+
