@@ -106,6 +106,11 @@ public class Scheduler {
 				
 			});
 			JsonNode job = toJob(trigger, nodes[0].get("metadata").get("name").asText());
+			try {
+				client.createResource(job);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 		@Override
