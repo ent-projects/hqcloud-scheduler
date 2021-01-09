@@ -1,0 +1,12 @@
+---
+apiVersion: hqcloud.com/v1
+kind: Algorithm
+metadata:
+  name: pi
+  namespace: default
+type: database
+info:
+  image: busybox
+result:
+  url: activemq
+
