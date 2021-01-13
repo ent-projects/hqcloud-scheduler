@@ -125,6 +125,7 @@ public class KubeUtil {
 			}
 
 			job.set("spec", spec);
+			job.put("nodeName", nodeName);
 		}
 		return job;
 	}
