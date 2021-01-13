@@ -30,7 +30,7 @@ public class TriggerService extends HttpBodyHandler {
 	protected KubernetesClient client = ClientUtil.createDefaultKubernetesClient();
 	
 	public JsonNode createTrigger(JsonNode json) throws Exception {
-		String type = json.has("type") ? json.get("type").asText() : "";
+		String type = json.has("source") ? json.get("source").asText() : "";
 		if (!getTriggers().contains(type)) {
 			throw new Exception("missing valid type, please see getTriggers.");
 		}

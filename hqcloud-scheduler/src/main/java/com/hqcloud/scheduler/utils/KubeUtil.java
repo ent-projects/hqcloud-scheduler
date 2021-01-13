@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.github.kubesys.KubernetesClient;
 
 /**
  * @author wuheng@otcaix.iscas.ac.cn
@@ -47,7 +48,8 @@ public class KubeUtil {
 		labels.put("execute", "fasle");
 		((ObjectNode) meta).set("labels", labels);
 		try {
-			ClientUtil.createDefaultKubernetesClient().updateResource(trigger);
+			KubernetesClient client = ClientUtil.createDefaultKubernetesClient();
+			client.updateResource(trigger);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

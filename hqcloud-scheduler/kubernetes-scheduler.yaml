@@ -1,0 +1,36 @@
+---
+apiVersion: "apps/v1"
+kind: "Deployment"
+metadata: 
+  name: "kube-scheduler"
+  namespace: "kube-system"
+  labels: 
+    name: "kube-scheduler"
+spec: 
+  replicas: 1
+  selector: 
+    matchLabels:
+      name: "kube-scheduler"
+  template: 
+    metadata: 
+      labels: 
+        name: "kube-scheduler"
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/master: ""
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+      containers:
+      - name: "kube-scheduler"
+        image: "registry.cn-beijing.aliyuncs.com/doslab/kubernetes-scheduler:v1.0.0-amd64"
+        imagePullPolicy: "IfNotPresent"
+        env:
+        - name: kubeUrl
+          value: https://127.0.0.1:6443
+        - name: token
+          value: xxx
+        command: 
+        - "java"
+        - "-jar"
+        - "kubernetes-scheduler.jar"

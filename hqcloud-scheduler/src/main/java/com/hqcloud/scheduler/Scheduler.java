@@ -21,106 +21,113 @@ import com.hqcloud.scheduler.utils.StringUtil;
 
 public class Scheduler {
 
-	protected final KubernetesClient client = ClientUtil.createDefaultKubernetesClient();
 	
-	protected final SchedulerPolicy policy;
-
-	public Scheduler(SchedulerPolicy policy) throws Exception {
-		this.policy = policy;
-	}
-	
-	public void run() throws Exception {
-		// receive trigger events
-		client.watchResources("Trigger", "", new TriggerToJob(client, policy));
-	}
-
-	public static class TriggerToJob extends KubernetesWatcher {
-
-		protected final SchedulerPolicy policy;
+	public void start() throws Exception {
+		KubernetesClient client = ClientUtil.createDefaultKubernetesClient();
 		
-		public TriggerToJob(KubernetesClient kubeClient, SchedulerPolicy policy) {
-			super(kubeClient);
-			this.policy = policy;
-		}
-
-		@Override
-		public void doAdded(JsonNode trigger) {
-			KubeUtil.updateTrggerLabel(trigger);
-			doScheduling(trigger);
-		}
-
-
-		@Override
-		public void doModified(JsonNode trigger) {
-			if (trigger.get("metadata").has("lables") && 
-					trigger.get("metadata").get("lables").has("execute") &&
-					trigger.get("metadata").get("lables").get("execute").asText().equals("true")) {
+		// receive trigger events
+		client.watchResources("Trigger", new KubernetesWatcher(client) {
+			
+			@Override
+			public void doAdded(JsonNode trigger) {
 				KubeUtil.updateTrggerLabel(trigger);
 				doScheduling(trigger);
 			}
-		}
 
-		@Override
-		public void doDeleted(JsonNode node) {
-			// ignore here
-		}
-		
-		void doScheduling(JsonNode trigger) {
-			
-			// Get algorithm using trigger.get("sink"),
-			String algorithm = trigger.get("sink").asText();
-			
-			// Get the nodes can running this algorithm
-			JsonNode[] nodes = KubeUtil.getAllNodes(algorithm);
 
-			if (nodes == null) {
-				KubeUtil.updateTriggerStatus(trigger, "error", "cannot find any nodes "
-						+ "supporting algorithm  " + algorithm, null);
-				return;
+			@Override
+			public void doModified(JsonNode trigger) {
+				JsonNode meta = trigger.get("metadata");
+				JsonNode labels = meta.get("labels");
+				String exec = labels.get("execute").asText();
+				if (exec.equals("true")) {
+					KubeUtil.updateTrggerLabel(trigger);
+					doScheduling(trigger);
+				}
 			}
 
-			// Sorting nodes according a specified scheduling policy
-			Arrays.sort(nodes, new Comparator<JsonNode>() {
+			@Override
+			public void doDeleted(JsonNode trigger) {
+				// ignore here
+				System.out.println(trigger.toPrettyString());
+			}
+			
+			void doScheduling(JsonNode trigger) {
+				
+				// Get algorithm using trigger.get("sink"),
+				String algorithm = trigger.get("sink").asText();
+				
+				// Get the nodes can running this algorithm
+				JsonNode[] nodes = KubeUtil.getAllNodes(algorithm);
 
-				@Override
-				public int compare(JsonNode o1, JsonNode o2) {
-					long lo1 = StringUtil.stringToLong(getValue(o1));
-					long lo2 = StringUtil.stringToLong(getValue(o2));
-					return (lo2 - lo1 < 0) ? -1 : 1;
+				if (nodes == null || nodes.length == 0) {
+					KubeUtil.updateTriggerStatus(trigger, "error", "cannot find any nodes "
+							+ "supporting algorithm " + algorithm, null);
+					return;
 				}
 
-			});
-			
-			// Generating scheduling results
-			JsonNode job = KubeUtil.triggerToJob(trigger, nodes[0].get("metadata").get("name").asText());
-			try {
-				JsonNode createResource = ClientUtil.createDefaultKubernetesClient().createResource(job);
-				if (createResource.has("status") && createResource.get("status").asText().equals("Failure")) {
-					KubeUtil.updateTriggerStatus(trigger, "error", createResource.toPrettyString(), null);
-					throw new Exception(createResource.toPrettyString());
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-		protected String getValue(JsonNode node) {
-			JsonNode value = node;
-			for (String key : policy.getPosition().split(".")) {
-				value = value.get(key);
-			}
-			return value.asText();
-		}
+				// Get policy
+				String policy = getPolicy();
+				
+				// Sorting nodes according a specified scheduling policy
+				Arrays.sort(nodes, new Comparator<JsonNode>() {
 
-		@Override
-		public void doClose() {
-		}
-		
+					@Override
+					public int compare(JsonNode o1, JsonNode o2) {
+						long lo1 = StringUtil.stringToLong(getValue(o1, policy));
+						long lo2 = StringUtil.stringToLong(getValue(o2, policy));
+						return (lo2 - lo1 < 0) ? -1 : 1;
+					}
+
+				});
+				
+				// Generating scheduling results
+				JsonNode job = KubeUtil.triggerToJob(trigger, nodes[0].get("metadata").get("name").asText());
+				try {
+					JsonNode createResource = ClientUtil.createDefaultKubernetesClient().createResource(job);
+					if (createResource.has("status") && createResource.get("status").asText().equals("Failure")) {
+						KubeUtil.updateTriggerStatus(trigger, "error", createResource.toPrettyString(), null);
+						throw new Exception(createResource.toPrettyString());
+					} 
+				} catch (Exception e) {
+					e.printStackTrace();
+					return;
+				}
+				
+				KubeUtil.updateTriggerStatus(trigger, "success", "executing using Job " 
+						+ job.get("metadata").get("name").asText(), null);
+			}
+			
+			protected String getPolicy() {
+				try {
+					JsonNode policy = client.getResource(
+							"ConfigMap", "default", "hqcloud-scheduler");
+					return policy.get("data").get("position").asText();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return null;
+			}
+			
+			protected String getValue(JsonNode node, String policy) {
+				JsonNode value = node;
+				for (String key : policy.split(".")) {
+					value = value.get(key);
+				}
+				return value.asText();
+			}
+
+			@Override
+			public void doClose() {
+			}
+		});
 	}
 
+
 	public static void main(String[] args) throws Exception {
-		Scheduler schd = new Scheduler(new SchedulerPolicy());
-		schd.run();
+		Scheduler schd = new Scheduler();
+		schd.start();
 		
 	}
 	

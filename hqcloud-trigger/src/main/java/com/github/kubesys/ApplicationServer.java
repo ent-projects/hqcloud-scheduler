@@ -4,7 +4,6 @@
 package com.github.kubesys;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 import com.github.kubesys.httpfrk.HttpServer;
@@ -24,7 +23,6 @@ import com.github.kubesys.httpfrk.HttpServer;
  * 
  */
 
-@SpringBootApplication
 @ComponentScan(basePackages = { "com.github.kubesys.httpfrk", "com.hqcloud.trigger.services" })
 public class ApplicationServer extends HttpServer  {
 
@@ -35,6 +33,26 @@ public class ApplicationServer extends HttpServer  {
 	 */
 	public static void main(String[] args) {
 		SpringApplication.run(ApplicationServer.class, args);
+	}
+
+	@Override
+	public String getTitle() {
+		return "调度原型";
+	}
+
+	@Override
+	public String getDesc() {
+		return "演示出整个流程";
+	}
+
+	@Override
+	public String getVersion() {
+		return null;
+	}
+
+	@Override
+	public String getPackage() {
+		return "com.hqcloud.trigger.services";
 	}
 
 }
