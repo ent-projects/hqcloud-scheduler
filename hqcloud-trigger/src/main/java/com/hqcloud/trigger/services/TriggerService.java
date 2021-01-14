@@ -63,20 +63,4 @@ public class TriggerService extends HttpBodyHandler {
 		}
 		return triggers;
 	}
-	
-	public JsonNode addTriggerType(String type, String desc) throws Exception {
-		JsonNode json = client.getResource("ConfigMap", "default", "hqcloud-trigger");
-		ObjectNode data = (ObjectNode) json.get("data");
-		data.put(type, desc);
-		return client.updateResource(json);
-	}
-	
-	public JsonNode removeTriggerType(String type) throws Exception {
-		JsonNode json = client.getResource("ConfigMap", "default", "hqcloud-trigger");
-		ObjectNode data = (ObjectNode) json.get("data");
-		if (data.has(type)) {
-			data.remove(type);
-		}
-		return client.updateResource(json);
-	}
 }

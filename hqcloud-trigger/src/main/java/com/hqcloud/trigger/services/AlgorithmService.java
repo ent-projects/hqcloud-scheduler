@@ -15,6 +15,7 @@ import com.github.kubesys.KubernetesClient;
 import com.github.kubesys.httpfrk.core.HttpBodyHandler;
 import com.github.kubesys.tools.annotations.ServiceDefinition;
 import com.hqcloud.trigger.utils.ClientUtil;
+import com.hqcloud.trigger.utils.KubeUtil;
 
 /**
  * @author wuheng@otcaix.iscas.ac.cn
@@ -50,7 +51,7 @@ public class AlgorithmService extends HttpBodyHandler {
 			throw new Exception("unsupport  algorithm" + alg + ", please see createAlgorithms");
 		}
 		
-		if (!getNodenames().contains(node)) {
+		if (!KubeUtil.getNodenames().contains(node)) {
 			throw new Exception("node " + node + " not exit, please see getNodenames");
 		}
 		JsonNode json = client.getResource("Node", node);
@@ -67,7 +68,7 @@ public class AlgorithmService extends HttpBodyHandler {
 			throw new Exception("unsupport  algorithm" + alg + ", please see createAlgorithms");
 		}
 		
-		if (!getNodenames().contains(node)) {
+		if (!KubeUtil.getNodenames().contains(node)) {
 			throw new Exception("node " + node + " not exit, please see getNodenames");
 		}
 		JsonNode json = client.getResource("Node", node);
@@ -78,16 +79,6 @@ public class AlgorithmService extends HttpBodyHandler {
 		return client.updateResource(json);
 	}
 	
-	public Set<String> getNodenames() throws Exception {
-		Set<String> nodes = new HashSet<>();
-		JsonNode json = client.listResources("Node");
-		for (Iterator<JsonNode> iter = json.get("items").iterator();iter.hasNext();) {
-			JsonNode item = iter.next();
-			nodes.add(item.get("metadata").get("name").asText());
-		}
-		return nodes;
-	}
-	
 	public Set<String> getAlgorithms() throws Exception {
 		Set<String> algs = new HashSet<>();
 		JsonNode json = client.getResource("ConfigMap", "default", "hqcloud-algorithm");
@@ -96,4 +87,5 @@ public class AlgorithmService extends HttpBodyHandler {
 		}
 		return algs;
 	}
+	
 }
