@@ -6,11 +6,11 @@
 
 	<groupId>com.github.kubesys</groupId>
 	<artifactId>hqcloud-trigger</artifactId>
-	<version>1.4.0</version>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
-	<name>kubernetes-api-mapper</name>
-	<description>kubernetes-api-mapper</description>
+	<name>hqcloud-trigger</name>
+	<description>hqcloud-trigger</description>
 
 	<properties>
 		<kubernetes-mirror.version>1.15.0</kubernetes-mirror.version>

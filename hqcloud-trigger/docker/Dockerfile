@@ -1,7 +1,7 @@
 FROM openjdk:11.0.7-slim
 
-RUN mkdir -p /home/kubernetes-trigger
+RUN mkdir -p /home/hqcloud-trigger
 
-ADD kubernetes-trigger.jar /home/kubernetes-trigger/
+ADD hqcloud-trigger.jar /home/hqcloud-trigger/
 
-WORKDIR /home/kubernetes-trigger
+WORKDIR /home/hqcloud-trigger

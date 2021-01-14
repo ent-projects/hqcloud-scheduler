@@ -2,19 +2,19 @@
 apiVersion: "apps/v1"
 kind: "Deployment"
 metadata: 
-  name: "kube-trigger"
+  name: "hqcloud-trigger"
   namespace: "kube-system"
   labels: 
-    name: "kube-trigger"
+    name: "hqcloud-trigger"
 spec: 
   replicas: 1
   selector: 
     matchLabels:
-      name: "kube-trigger"
+      name: "hqcloud-trigger"
   template: 
     metadata: 
       labels: 
-        name: "kube-trigger"
+        name: "hqcloud-trigger"
     spec:
       nodeSelector:
         node-role.kubernetes.io/master: ""
@@ -22,8 +22,8 @@ spec:
         - key: node-role.kubernetes.io/master
           effect: NoSchedule
       containers:
-      - name: "kube-trigger"
-        image: "registry.cn-beijing.aliyuncs.com/doslab/kubernetes-trigger:v1.0.0-amd64"
+      - name: "hqcloud-trigger"
+        image: "registry.cn-beijing.aliyuncs.com/doslab/hqcloud-trigger:v1.0.0-amd64"
         imagePullPolicy: "IfNotPresent"
         env:
         - name: kubeUrl
@@ -33,22 +33,22 @@ spec:
         command: 
         - "java"
         - "-jar"
-        - "kubernetes-trigger.jar"
+        - "hqcloud-trigger.jar"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: kube-trigger
+  name: hqcloud-trigger
   namespace: kube-system
   labels: 
-    name: kube-trigger
+    name: hqcloud-trigger
 spec:
   type: NodePort
   ports:
   - port: 8080
     protocol: TCP
     targetPort: 8080
-    name: kube-trigger-port
+    name: hqcloud-trigger-port
     nodePort: 38080
   selector:
-    name: kube-trigger
+    name: hqcloud-trigger

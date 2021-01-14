@@ -2,19 +2,19 @@
 apiVersion: "apps/v1"
 kind: "Deployment"
 metadata: 
-  name: "kube-scheduler"
+  name: "hqcloud-scheduler"
   namespace: "kube-system"
   labels: 
-    name: "kube-scheduler"
+    name: "hqcloud-scheduler"
 spec: 
   replicas: 1
   selector: 
     matchLabels:
-      name: "kube-scheduler"
+      name: "hqcloud-scheduler"
   template: 
     metadata: 
       labels: 
-        name: "kube-scheduler"
+        name: "hqcloud-scheduler"
     spec:
       nodeSelector:
         node-role.kubernetes.io/master: ""
@@ -22,8 +22,8 @@ spec:
         - key: node-role.kubernetes.io/master
           effect: NoSchedule
       containers:
-      - name: "kube-scheduler"
-        image: "registry.cn-beijing.aliyuncs.com/doslab/kubernetes-scheduler:v1.0.0-amd64"
+      - name: "hqcloud-scheduler"
+        image: "registry.cn-beijing.aliyuncs.com/doslab/hqcloud-scheduler:v1.0.0-amd64"
         imagePullPolicy: "IfNotPresent"
         env:
         - name: kubeUrl
@@ -33,4 +33,4 @@ spec:
         command: 
         - "java"
         - "-jar"
-        - "kubernetes-scheduler.jar"
+        - "hqcloud-scheduler.jar"
