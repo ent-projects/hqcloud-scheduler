@@ -82,7 +82,7 @@ public class Scheduler {
 				});
 				
 				// Generating scheduling results
-				JsonNode job = KubeUtil.triggerToJob(trigger, nodes[0].get("metadata").get("name").asText());
+				JsonNode job = KubeUtil.triggerToPod(trigger, nodes[0].get("metadata").get("name").asText());
 				try {
 					JsonNode createResource = ClientUtil.createDefaultKubernetesClient().createResource(job);
 					if (createResource.has("status") && createResource.get("status").asText().equals("Failure")) {
@@ -94,7 +94,7 @@ public class Scheduler {
 					return;
 				}
 				
-				KubeUtil.updateTriggerStatus(trigger, "success", "executing using Job " 
+				KubeUtil.updateTriggerStatus(trigger, "success", "executing using Pod " 
 						+ job.get("metadata").get("name").asText(), null);
 			}
 			

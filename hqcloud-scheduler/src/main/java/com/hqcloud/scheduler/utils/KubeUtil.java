@@ -130,6 +130,60 @@ public class KubeUtil {
 		return job;
 	}
 	
+	public static JsonNode triggerToPod(JsonNode trigger, String nodeName) {
+
+		String podName = trigger.get("metadata").get("name").asText() 
+							+ "-" + StringUtil.getRandomString();
+
+		ObjectNode pod = new ObjectMapper().createObjectNode();
+		pod.put("apiVersion", "v1");
+		pod.put("kind", "Pod");
+
+		{
+			ObjectNode meta = new ObjectMapper().createObjectNode();
+			meta.put("name", podName);
+			{
+				ObjectNode labels = new ObjectMapper().createObjectNode();
+				labels.put("execute", "false");
+				labels.put("app", podName);
+				labels.put("trigger", trigger.get("metadata").get("name").asText());
+				meta.set("labels", labels);
+			}
+			pod.set("metadata", meta);
+		}
+
+		{
+			ObjectNode spec = new ObjectMapper().createObjectNode();
+			{
+				ArrayNode containers = new ObjectMapper().createArrayNode();
+
+				{
+					ObjectNode container = new ObjectMapper().createObjectNode();
+					container.put("image", getJobImage(trigger.get("sink").asText()));
+					container.put("name", podName);
+					container.put("imagePullPolicy", "IfNotPresent");
+
+					if (trigger.get("info").has("env")) {
+						container.set("env", trigger.get("info").get("env"));
+					}
+
+					if (trigger.get("info").has("command")) {
+						container.set("command", trigger.get("info").get("command"));
+					}
+
+					containers.add(container);
+				}
+				spec.set("containers", containers);
+				spec.put("restartPolicy", "Never");
+				spec.put("nodeName", nodeName);
+			}
+
+			pod.set("spec", spec);
+			
+		}
+		return pod;
+	}
+	
 	public static String getJobImage(String key) {
 		try {
 			JsonNode json = ClientUtil.createDefaultKubernetesClient()
