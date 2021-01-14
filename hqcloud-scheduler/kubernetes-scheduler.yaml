@@ -23,7 +23,7 @@ spec:
           effect: NoSchedule
       containers:
       - name: "hqcloud-scheduler"
-        image: "registry.cn-beijing.aliyuncs.com/doslab/hqcloud-scheduler:v1.0.0-amd64"
+        image: "registry.cn-beijing.aliyuncs.com/dosproj/hqcloud-scheduler:v1.0.0-amd64"
         imagePullPolicy: "IfNotPresent"
         env:
         - name: kubeUrl

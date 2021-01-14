@@ -1,5 +1,5 @@
 /**
-/¡° * Copyrigt (2019, ) Institute of Software, Chinese Academy of Sciences
+/ * Copyrigt (2019, ) Institute of Software, Chinese Academy of Sciences
  */
 package com.hqcloud.scheduler;
 

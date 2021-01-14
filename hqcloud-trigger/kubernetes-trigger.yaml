@@ -23,7 +23,7 @@ spec:
           effect: NoSchedule
       containers:
       - name: "hqcloud-trigger"
-        image: "registry.cn-beijing.aliyuncs.com/doslab/hqcloud-trigger:v1.0.0-amd64"
+        image: "registry.cn-beijing.aliyuncs.com/dosproj/hqcloud-trigger:v1.0.0-amd64"
         imagePullPolicy: "IfNotPresent"
         env:
         - name: kubeUrl
